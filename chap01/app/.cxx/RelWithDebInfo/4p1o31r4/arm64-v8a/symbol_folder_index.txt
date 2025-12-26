@@ -1,0 +1,1 @@
+/home/astmin/Documents/Android/com.packt.android.NDK/chap01/app/build/intermediates/cxx/RelWithDebInfo/4p1o31r4/obj/arm64-v8a

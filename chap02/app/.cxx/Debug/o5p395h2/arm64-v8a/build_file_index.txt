@@ -1,0 +1,1 @@
+/home/astmin/Documents/Android/com.packt.android.NDK/chap02/app/src/main/cpp/CMakeLists.txt

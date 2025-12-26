@@ -1,0 +1,36 @@
+plugins {
+	id "com.android.application"
+}
+
+android {
+
+    namespace "com.example.graphicsSetup"
+    compileSdk 34
+
+    defaultConfig {
+
+        applicationId "com.example.graphicsSetup"
+
+        minSdk 21
+        targetSdk 34
+
+        versionCode 1
+        versionName "1.0"
+
+        ndk {
+            abiFilters "arm64-v8a"
+        }
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++17 -O2"
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+        }
+    }
+}

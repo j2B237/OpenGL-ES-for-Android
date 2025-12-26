@@ -1,0 +1,7 @@
+com.example.firstNative.app-pngs-0 /home/astmin/Documents/Android/com.packt.android.NDK/chap01/app/build/generated/res/pngs/release
+com.example.firstNative.app-resValues-1 /home/astmin/Documents/Android/com.packt.android.NDK/chap01/app/build/generated/res/resValues/release
+com.example.firstNative.app-packageReleaseResources-2 /home/astmin/Documents/Android/com.packt.android.NDK/chap01/app/build/intermediates/incremental/release/packageReleaseResources/merged.dir
+com.example.firstNative.app-packageReleaseResources-3 /home/astmin/Documents/Android/com.packt.android.NDK/chap01/app/build/intermediates/incremental/release/packageReleaseResources/stripped.dir
+com.example.firstNative.app-merged_res-4 /home/astmin/Documents/Android/com.packt.android.NDK/chap01/app/build/intermediates/merged_res/release
+com.example.firstNative.app-main-5 /home/astmin/Documents/Android/com.packt.android.NDK/chap01/app/src/main/res
+com.example.firstNative.app-release-6 /home/astmin/Documents/Android/com.packt.android.NDK/chap01/app/src/release/res
