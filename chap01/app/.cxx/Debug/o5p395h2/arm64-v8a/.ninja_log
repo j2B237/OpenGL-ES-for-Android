@@ -1,9 +1,0 @@
-# ninja log v5
-0	24	1766688188140992131	CMakeFiles/native-lib.dir/native-lib.cpp.o	71f0509c7f0e5a51
-24	40	1766688188156991276	/home/astmin/Documents/Android/com.packt.android.NDK/chap01/app/build/intermediates/cxx/Debug/o5p395h2/obj/arm64-v8a/libnative-lib.so	ebcc2b2ef3359fdc
-1	3	0	clean	d8590c125671565e
-0	44	1766688352087236423	CMakeFiles/native-lib.dir/native-lib.cpp.o	71f0509c7f0e5a51
-45	63	1766688352107235355	/home/astmin/Documents/Android/com.packt.android.NDK/chap01/app/build/intermediates/cxx/Debug/o5p395h2/obj/arm64-v8a/libnative-lib.so	ebcc2b2ef3359fdc
-0	2	0	clean	d8590c125671565e
-1	36	1766688449885753026	CMakeFiles/native-lib.dir/native-lib.cpp.o	71f0509c7f0e5a51
-37	74	1766688449923824845	/home/astmin/Documents/Android/com.packt.android.NDK/chap01/app/build/intermediates/cxx/Debug/o5p395h2/obj/arm64-v8a/libnative-lib.so	ebcc2b2ef3359fdc
