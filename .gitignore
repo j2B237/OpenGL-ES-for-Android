@@ -39,3 +39,91 @@
 
 # debug information files
 *.dwo
+
+
+# ======================
+# Java
+# ======================
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Logs
+*.log
+
+# JVM crash logs
+hs_err_pid*
+
+# ======================
+# Android / Gradle
+# ======================
+.gradle/
+build/
+*/build/
+
+# Local config
+local.properties
+
+# APK / AAB
+*.apk
+*.ap_
+*.aab
+
+# Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea/caches/
+.idea/libraries/
+
+# ======================
+# NDK / C / C++
+# ======================
+obj/
+.cxx/
+*.o
+*.a
+*.so
+*.lo
+*.la
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+# ======================
+# OpenGL / Debug
+# ======================
+*.gdb
+*.lldb
+*.dSYM/
+
+# ======================
+# OS / Editor
+# ======================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+
+# VS Code
+.vscode/
+
+# ======================
+# Keystore (CRITICAL)
+# ======================
+*.jks
+*.keystore
+
+# ======================
+# Misc
+# ======================
+out/
+bin/
+target/
+
