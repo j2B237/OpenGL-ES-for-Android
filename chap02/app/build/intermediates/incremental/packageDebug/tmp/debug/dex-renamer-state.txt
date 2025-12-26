@@ -1,7 +1,0 @@
-#Fri Dec 26 12:38:19 GMT 2025
-base.1=/home/astmin/Documents/Android/com.packt.android.NDK/chap02/app/build/intermediates/dex/debug/mergeProjectDexDebug/3/classes.dex
-path.1=3/classes.dex
-base.0=/home/astmin/Documents/Android/com.packt.android.NDK/chap02/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
-renamed.1=classes2.dex
-renamed.0=classes.dex
-path.0=0/classes.dex
