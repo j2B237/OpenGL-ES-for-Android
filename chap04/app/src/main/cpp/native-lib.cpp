@@ -1,21 +1,19 @@
 #include "com_example_simpleCube_NativeLibrary.h"
+#include "include/matrix.h"
+
 #include <unistd.h>
 #include <android/log.h>
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 
 #define LOG_TAG "libNative"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 
 /* Hardcoded vertex and fragment shader programs */
@@ -28,9 +26,15 @@ extern "C" {
 */
 
 static const char glVertexShader[] = 
-	"attribute vec4 vPosition;\n"
-	"void main(){\n"
-	"\tgl_Position = vPosition;\n"
+	"attribute vec4 vertexPosition;\n"
+	"attribute vec3 vertexColour;\n"
+	"varying vec3 fragColour;\n"
+	"uniform mat4 projection;\n"
+	"uniform mat4 modelView;\n"
+	"void main()\n"
+	"{\n"
+	"    gl_Position = projection * modelView * vertexPosition;\n"
+	"    fragColour = vertexColour;\n"
 	"}\n";
 
 /*
@@ -41,8 +45,10 @@ static const char glVertexShader[] =
 
 static const char glFragmentShader[] = 
 	"precision mediump float;\n"
-	"void main(){\n"
-	"\tgl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
+	"varying vec3 fragColour;\n"
+	"void main()\n"
+	"{\n"
+	"    gl_FragColor = vec4(fragColour, 1.0);\n"
 	"}\n";
 
 
@@ -143,38 +149,138 @@ GLuint createProgram(const char *vertexSource, const char *fragmentSource){
 	the vertex data that is required for our shader.
 */
 
-GLuint simpleTriangleProgram;
-GLuint vPosition;
+GLuint simpleCubeProgram;
+GLuint vertexLocation, vertexColorLocation;
+GLuint projectionLocation, modelViewLocation;
+
+float projectionMatrix[16];
+float modelViewMatrix[16];
+float angle = 0;
 
 bool setupGraphics(int w, int h) {
-	simpleTriangleProgram = createProgram(glVertexShader, glFragmentShader);
 
-	if(!simpleTriangleProgram){
+	simpleCubeProgram = createProgram(glVertexShader, glFragmentShader);
+
+	if(!simpleCubeProgram){
 		LOGE("Could not create a program");
 		return false;
 	}
 
-	vPosition = glGetAttribLocation(simpleTriangleProgram,"vPosition");
+	vertexLocation = glGetAttribLocation(simpleCubeProgram,"vertexPosition");
+	vertexColorLocation = glGetAttribLocation(simpleCubeProgram, "vertexColour");
+	projectionLocation = glGetUniformLocation(simpleCubeProgram, "projection");
+	modelViewLocation = glGetUniformLocation(simpleCubeProgram, "modelView");
+
+	// setup the perspective
+	matrixPerspective(projectionMatrix, 45.0f, (float)w/(float)h, 0.1f, 100.0f);
+
+	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, w, h);
 
 	return true;
 }
 
-const GLfloat triangleVertices[] = {
-   0.0f, 0.5f,
-  -0.5f, -0.5f,
-   0.5f, -0.5f
+GLfloat cubeVertices[] = {
+	-0.5f,  0.5f, -0.5f, /* Back. */
+   0.5f,  0.5f, -0.5f,
+  -0.5f, -0.5f, -0.5f,
+	 0.5f, -0.5f, -0.5f,
+	-0.5f,  0.5f,  0.5f, /* Front. */
+	 0.5f,  0.5f,  0.5f,
+	-0.5f, -0.5f,  0.5f,
+	 0.5f, -0.5f,  0.5f,
+	-0.5f,  0.5f, -0.5f, /* Left. */
+  -0.5f, -0.5f, -0.5f,
+	-0.5f, -0.5f,  0.5f,
+	-0.5f,  0.5f,  0.5f,
+	 0.5f,  0.5f, -0.5f, /* Right. */
+	 0.5f, -0.5f, -0.5f,
+	 0.5f, -0.5f,  0.5f,
+ 	 0.5f,  0.5f,  0.5f,
+	-0.5f, -0.5f, -0.5f, /* Top. */
+	-0.5f, -0.5f,  0.5f,
+	 0.5f, -0.5f,  0.5f,
+ 	 0.5f, -0.5f, -0.5f,
+	-0.5f,  0.5f, -0.5f, /* Bottom. */
+	-0.5f,  0.5f,  0.5f,
+	 0.5f,  0.5f,  0.5f,
+	 0.5f,  0.5f, -0.5f
 };
+
+GLfloat colour[] = {
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f
+ };
+
+
+GLushort indices[] = {
+	0, 2, 3, 
+	0, 1, 3, 
+	4, 6, 7, 
+	4, 5, 7,
+	8, 9, 10, 
+	11, 8, 10, 
+	12, 13, 14, 
+	15, 12, 14, 
+	16, 17, 18, 
+	16, 19, 18, 
+	20, 21, 22, 
+	20, 23, 22
+};
+
 
 void renderFrame() {
 
-	glClearColor(0.3, 0.3, 0.3, 1.0);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	glUseProgram(simpleTriangleProgram);
-	glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, triangleVertices);
-	glEnableVertexAttribArray(vPosition);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	matrixIdentityFunction(modelViewMatrix);
+
+	matrixRotateX(modelViewMatrix, angle);
+	matrixRotateY(modelViewMatrix, angle);
+
+	matrixTranslate(modelViewMatrix, 0.0f, 0.0f, -10.0f);
+
+	glUseProgram(simpleCubeProgram);
+	
+	// Bind and enable both vertexPosition and vertexColor
+	glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, cubeVertices);
+	glEnableVertexAttribArray(vertexLocation);
+
+	glVertexAttribPointer(vertexColorLocation, 3, GL_FLOAT, GL_FALSE, 0, colour);
+	glEnableVertexAttribArray(vertexColorLocation);
+
+
+	glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, projectionMatrix);
+	glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, modelViewMatrix);
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, indices);
+
+	angle += 1.0;
+	if(angle > 360.0)
+		angle -= 360.0;
 }
 
 
@@ -189,6 +295,4 @@ Java_com_example_simpleCube_NativeLibrary_step
   (JNIEnv *env, jclass clazz){
   	renderFrame();
 }
-#ifdef __cplusplus
-}
-#endif
+

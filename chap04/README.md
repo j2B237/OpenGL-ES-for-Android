@@ -1,5 +1,6 @@
 # INTRODUCTION
 
-This program will take the application we created in Graphics Setup and teach you how to draw a simple red triangle to the screen. Basic drawing commands will be described and there will also be a brief introduction to both fragment and vertex shaders. No changes are needed to the Java side of the application, all the changes that happen are in the native side.
+Introduction in transformations and movement in OpenGL ES 2.0.
 
+This Program addresses these issues by talking about how to move, rotate and scale objects. To demonstrate this theory, we will be turning our triangle into a cube and making it spin.
 
