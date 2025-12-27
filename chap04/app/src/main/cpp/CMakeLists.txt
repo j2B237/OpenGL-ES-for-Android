@@ -12,7 +12,6 @@ add_library(
 	matrix.cpp
 )
 
-
 # JNI shared Library
 add_library(
 	native-lib
