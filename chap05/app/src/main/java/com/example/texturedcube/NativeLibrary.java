@@ -1,4 +1,4 @@
-package com.example.simpleCube;
+package com.example.texturedcube;
 
 public class NativeLibrary 
 {
