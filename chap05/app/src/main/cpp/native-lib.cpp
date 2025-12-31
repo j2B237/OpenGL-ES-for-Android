@@ -1,5 +1,6 @@
 #include "com_example_texturedcube_NativeLibrary.h"
 #include "include/Matrix.h"
+#include "include/Texture.h"
 
 #include <unistd.h>
 #include <android/log.h>
@@ -27,14 +28,14 @@
 
 static const char glVertexShader[] = 
 	"attribute vec4 vertexPosition;\n"
-	"attribute vec3 vertexColour;\n"
-	"varying vec3 fragColour;\n"
+	"attribute vec2 vertexTexCoord;\n"
+	"varying vec2 textureCoord;\n"
 	"uniform mat4 projection;\n"
 	"uniform mat4 modelView;\n"
 	"void main()\n"
 	"{\n"
 	"    gl_Position = projection * modelView * vertexPosition;\n"
-	"    fragColour = vertexColour;\n"
+	"    textureCoord = vertexTexCoord;\n"
 	"}\n";
 
 /*
@@ -45,10 +46,11 @@ static const char glVertexShader[] =
 
 static const char glFragmentShader[] = 
 	"precision mediump float;\n"
-	"varying vec3 fragColour;\n"
+	"uniform sampler2D texture;\n"
+	"varying vec2 textureCoord;\n"
 	"void main()\n"
 	"{\n"
-	"    gl_FragColor = vec4(fragColour, 1.0);\n"
+	"    gl_FragColor = texture2D(texture, textureCoord);\n"
 	"}\n";
 
 
@@ -149,9 +151,17 @@ GLuint createProgram(const char *vertexSource, const char *fragmentSource){
 	the vertex data that is required for our shader.
 */
 
-GLuint simpleCubeProgram;
-GLuint vertexLocation, vertexColorLocation;
+// Redering program object handle
+GLuint simpleProgram;
+
+// Pointer to object in GPU memory
+GLuint vertexLocation, vertexTexCoordLoc;
 GLuint projectionLocation, modelViewLocation;
+
+// texture object handle
+GLuint samplerLocation;
+GLuint textureId;															
+
 
 float projectionMatrix[16];
 float modelViewMatrix[16];
@@ -159,95 +169,100 @@ float angle = 0;
 
 bool setupGraphics(int w, int h) {
 
-	simpleCubeProgram = createProgram(glVertexShader, glFragmentShader);
+	simpleProgram = createProgram(glVertexShader, glFragmentShader);
 
-	if(!simpleCubeProgram){
+	if(!simpleProgram){
 		LOGE("Could not create a program");
 		return false;
 	}
 
-	vertexLocation = glGetAttribLocation(simpleCubeProgram,"vertexPosition");
-	vertexColorLocation = glGetAttribLocation(simpleCubeProgram, "vertexColour");
-	projectionLocation = glGetUniformLocation(simpleCubeProgram, "projection");
-	modelViewLocation = glGetUniformLocation(simpleCubeProgram, "modelView");
+	// Retrieve Address of objects in GPU memory
+	vertexLocation = glGetAttribLocation(simpleProgram,"vertexPosition");
+	vertexTexCoordLoc = glGetAttribLocation(simpleProgram, "vertexTexCoord");
+	projectionLocation = glGetUniformLocation(simpleProgram, "projection");
+	modelViewLocation = glGetUniformLocation(simpleProgram, "modelView");
+	samplerLocation = glGetUniformLocation(simpleProgram, "texture");
 
 	// setup the perspective
 	matrixPerspective(projectionMatrix, 45.0f, (float)w/(float)h, 0.1f, 100.0f);
-
 	glEnable(GL_DEPTH_TEST);
+
 	glViewport(0, 0, w, h);
 
-	return true;
+	// Load the texture
+	textureId = loadTexture();
+	if(textureId == 0)
+		return false;
+	else
+		return true;
+
 }
 
-GLfloat cubeVertices[] = {
-	-0.5f,  0.5f, -0.5f, /* Back. */
-   0.5f,  0.5f, -0.5f,
-  -0.5f, -0.5f, -0.5f,
-	 0.5f, -0.5f, -0.5f,
-	-0.5f,  0.5f,  0.5f, /* Front. */
-	 0.5f,  0.5f,  0.5f,
-	-0.5f, -0.5f,  0.5f,
-	 0.5f, -0.5f,  0.5f,
-	-0.5f,  0.5f, -0.5f, /* Left. */
-  -0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f,  0.5f,
-	-0.5f,  0.5f,  0.5f,
-	 0.5f,  0.5f, -0.5f, /* Right. */
-	 0.5f, -0.5f, -0.5f,
-	 0.5f, -0.5f,  0.5f,
- 	 0.5f,  0.5f,  0.5f,
-	-0.5f, -0.5f, -0.5f, /* Top. */
-	-0.5f, -0.5f,  0.5f,
-	 0.5f, -0.5f,  0.5f,
- 	 0.5f, -0.5f, -0.5f,
-	-0.5f,  0.5f, -0.5f, /* Bottom. */
-	-0.5f,  0.5f,  0.5f,
-	 0.5f,  0.5f,  0.5f,
-	 0.5f,  0.5f, -0.5f
+GLfloat cubeVertices[108] = {
+	-1.0f,-1.0f,-1.0f, // triangle 1 : begin
+	-1.0f,-1.0f, 1.0f,
+	-1.0f, 1.0f, 1.0f, // triangle 1 : end
+	1.0f, 1.0f,-1.0f, // triangle 2 : begin
+	-1.0f,-1.0f,-1.0f,
+	-1.0f, 1.0f,-1.0f, // triangle 2 : end
+	1.0f,-1.0f, 1.0f,
+	-1.0f,-1.0f,-1.0f,
+	1.0f,-1.0f,-1.0f,
+	1.0f, 1.0f,-1.0f,
+	1.0f,-1.0f,-1.0f,
+	-1.0f,-1.0f,-1.0f,
+	-1.0f,-1.0f,-1.0f,
+	-1.0f, 1.0f, 1.0f,
+	-1.0f, 1.0f,-1.0f,
+	1.0f,-1.0f, 1.0f,
+	-1.0f,-1.0f, 1.0f,
+	-1.0f,-1.0f,-1.0f,
+	-1.0f, 1.0f, 1.0f,
+	-1.0f,-1.0f, 1.0f,
+	1.0f,-1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f,-1.0f,-1.0f,
+	1.0f, 1.0f,-1.0f,
+	1.0f,-1.0f,-1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f,-1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f,-1.0f,
+	-1.0f, 1.0f,-1.0f,
+	1.0f, 1.0f, 1.0f,
+	-1.0f, 1.0f,-1.0f,
+	-1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	-1.0f, 1.0f, 1.0f,
+	1.0f,-1.0f, 1.0f
 };
 
-GLfloat colour[] = {
-		1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f
- };
 
-
-GLushort indices[] = {
-	0, 2, 3, 
-	0, 1, 3, 
-	4, 6, 7, 
-	4, 5, 7,
-	8, 9, 10, 
-	11, 8, 10, 
-	12, 13, 14, 
-	15, 12, 14, 
-	16, 17, 18, 
-	16, 19, 18, 
-	20, 21, 22, 
-	20, 23, 22
+GLfloat textureCords[] = { 
+	1.0f, 1.0f, /* Back. */
+	0.0f, 1.0f,
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+	0.0f, 1.0f, /* Front. */
+	1.0f, 1.0f,
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	0.0f, 1.0f, /* Left. */
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	1.0f, 1.0f,
+	1.0f, 1.0f, /* Right. */
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+	0.0f, 1.0f,
+	0.0f, 1.0f, /* Top. */
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	1.0f, 1.0f,
+	0.0f, 0.0f, /* Bottom. */
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+	1.0f, 0.0f
 };
 
 
@@ -264,20 +279,22 @@ void renderFrame() {
 	matrixTranslate(modelViewMatrix, 0.0f, 0.0f, -10.0f);
 	//matrixScale(modelViewMatrix, 1.5f, 1.5f, 1.5f);
 
-	glUseProgram(simpleCubeProgram);
+	glUseProgram(simpleProgram);
 	
 	// Bind and enable both vertexPosition and vertexColor
 	glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, cubeVertices);
 	glEnableVertexAttribArray(vertexLocation);
 
-	glVertexAttribPointer(vertexColorLocation, 3, GL_FLOAT, GL_FALSE, 0, colour);
-	glEnableVertexAttribArray(vertexColorLocation);
-
+	glVertexAttribPointer(vertexTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, textureCords);
+	glEnableVertexAttribArray(vertexTexCoordLoc);
 
 	glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, projectionMatrix);
 	glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, modelViewMatrix);
 
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, indices);
+	// Set the sampler texture unit to 0 */
+	glUniform1i(samplerLocation, 0);
+	
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	angle += 1.0;
 	if(angle > 360.0)

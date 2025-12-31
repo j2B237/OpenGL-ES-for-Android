@@ -15,6 +15,12 @@ add_library(
 )
 
 
+add_library(
+	Texture
+	STATIC
+	Texture.cpp
+)
+
 # Compile JNI lib
 add_library(
 	native-lib
@@ -35,6 +41,7 @@ target_include_directories(
 target_link_libraries(
 	native-lib
 	Matrix
+	Texture
 	${log-lib}
 	${android-lib}
 	${glesv2-lib}
