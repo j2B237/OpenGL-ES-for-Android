@@ -253,7 +253,7 @@ GLushort indices[] = {
 
 void renderFrame() {
 
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	matrixIdentityFunction(modelViewMatrix);
@@ -262,6 +262,7 @@ void renderFrame() {
 	matrixRotateY(modelViewMatrix, angle);
 
 	matrixTranslate(modelViewMatrix, 0.0f, 0.0f, -10.0f);
+	//matrixScale(modelViewMatrix, 1.5f, 1.5f, 1.5f);
 
 	glUseProgram(simpleCubeProgram);
 	
