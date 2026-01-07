@@ -6,7 +6,7 @@ import android.util.Log;
 
 
 
-pulic class MainActivity extends Activity
+public class MainActivity extends Activity
 {
 	private static final String TAG = "Lighting-Main";
 
