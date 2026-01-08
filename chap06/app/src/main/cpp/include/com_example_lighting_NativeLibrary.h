@@ -39,6 +39,15 @@ JNIEXPORT void JNICALL Java_com_example_lighting_NativeLibrary_render
 JNIEXPORT void JNICALL Java_com_example_lighting_NativeLibrary_loadResources
   (JNIEnv *, jclass);
 
+
+/*
+ * Class:     com_example_lighting_NativeLibrary
+ * Method:    setAssetManager
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_example_lighting_NativeLibrary_setAssetManager
+  (JNIEnv *, jclass /*this*/, jclass /*AssetManager pointer*/);
+
 #ifdef __cplusplus
 }
 #endif

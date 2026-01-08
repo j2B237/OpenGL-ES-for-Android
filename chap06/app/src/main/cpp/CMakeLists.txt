@@ -8,9 +8,21 @@ find_library(android-lib android)
 find_library(glesv2-lib GLESv2)
 
 add_library(
+	Shader
+	STATIC
+	Shader.cpp
+)
+
+add_library(
 	Matrix
 	STATIC
 	Matrix.cpp
+)
+
+add_library(
+	AssetManagerHandler
+	STATIC
+	AssetManagerHandler.cpp
 )
 
 # JNI library
@@ -31,6 +43,8 @@ target_include_directories(
 target_link_libraries(
 	native-lib
 	Matrix
+	Shader
+	AssetManagerHandler
 	${android-lib}
 	${log-lib}
 	${glesv2-lib}

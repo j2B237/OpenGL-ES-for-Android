@@ -5,23 +5,25 @@ import android.os.Bundle;
 import android.util.Log;
 
 import android.content.res.AssetManager;
+import android.widget.TextView;
 
 public class MainActivity extends Activity
 {
 	private static final String TAG = "Lighting-Main";
 	protected GraphicsView graphicView;
+	protected TextView speed;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		Log.i(TAG, "On Method create called");
-		//graphicView = new SurfaceView(getApplication());
-		//setContentView(graphicView);
+		NativeLibrary.setAssetManager(getAssets());
 
 		setContentView(R.layout.my_layout);
 
         graphicView = findViewById(R.id.glView);
+        speed = findViewById(R.id.hud);
 	}
 
 	@Override

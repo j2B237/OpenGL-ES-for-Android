@@ -1,4 +1,5 @@
 package com.example.lighting;
+import android.content.res.AssetManager;
 
 public class NativeLibrary
 {
@@ -14,4 +15,5 @@ public class NativeLibrary
 	public static native void update(int width, int height);
 	public static native void render();
 	public static native void loadResources();
+	public static native void setAssetManager(AssetManager gAssetManager);
 }
