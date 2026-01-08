@@ -7,6 +7,11 @@ find_library(log-lib log)
 find_library(android-lib android)
 find_library(glesv2-lib GLESv2)
 
+add_library(
+	Matrix
+	STATIC
+	Matrix.cpp
+)
 
 # JNI library
 add_library(
@@ -25,6 +30,7 @@ target_include_directories(
 
 target_link_libraries(
 	native-lib
+	Matrix
 	${android-lib}
 	${log-lib}
 	${glesv2-lib}

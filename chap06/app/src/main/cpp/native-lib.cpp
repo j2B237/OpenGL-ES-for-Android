@@ -1,6 +1,8 @@
 #include "include/com_example_lighting_NativeLibrary.h"
 
 #include "include/GLIncludes.h"
+#include "include/Matrix.h"
+
 
 JNIEXPORT void JNICALL Java_com_example_lighting_NativeLibrary_initGraphics
   (JNIEnv *env, jclass  clazz, jint width, jint height){

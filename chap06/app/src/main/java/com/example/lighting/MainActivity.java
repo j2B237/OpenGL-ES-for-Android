@@ -9,15 +9,19 @@ import android.content.res.AssetManager;
 public class MainActivity extends Activity
 {
 	private static final String TAG = "Lighting-Main";
-	protected SurfaceView graphicView;
+	protected GraphicsView graphicView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		Log.i(TAG, "On Method create called");
-		graphicView = new SurfaceView(getApplication());
-		setContentView(graphicView);
+		//graphicView = new SurfaceView(getApplication());
+		//setContentView(graphicView);
+
+		setContentView(R.layout.my_layout);
+
+        graphicView = findViewById(R.id.glView);
 	}
 
 	@Override

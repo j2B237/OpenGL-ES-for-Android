@@ -2,6 +2,8 @@ package com.example.lighting;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.AttributeSet;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
@@ -9,7 +11,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 
-public class SurfaceView extends GLSurfaceView 
+public class GraphicsView extends GLSurfaceView 
 {
 	/*[Private member variables]*/
 	protected int redSize = 8;
@@ -29,12 +31,24 @@ public class SurfaceView extends GLSurfaceView
 	protected int[] value = new int[1];
 
 	/*[constructor]*/
-	public SurfaceView(Context ctx)
+	public GraphicsView(Context ctx)
 	{
-		super(ctx);
+	 	super(ctx);
+        init();
+	}
+
+	// Constructeur XML (OBLIGATOIRE)
+    public GraphicsView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+	private void init()
+	{
 		setEGLContextFactory(new ContextFactory());
 		setEGLConfigChooser(new ConfigChooser());
 		setRenderer(new Renderer());
+		setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 	}
 
 	/*[ContextFactory]*/
