@@ -4,6 +4,10 @@
 #include "GLIncludes.h"
 #include "AssetManagerHandler.h"
 
+#include <android/log.h>
+#include <cstdlib>
+#include <cstring>
+
 class Shader{
 
 public:
@@ -30,11 +34,12 @@ private:
 	char* loadShaderFromAsset(const char* filename);
 	GLuint loadShader(const char *text, GLenum shaderType);
 	void createProgram(const char* vertexSource, const char* fragmentSource);
+	void checkShaderError(GLuint shader, const char* type);
 
 	GLuint m_Id;
-
-	char *m_vertexText, m_fragmentText;
-}
+	char *m_vertexText;
+	char *m_fragmentText;
+};
 
 
 #endif /* __SHADER_H__ */

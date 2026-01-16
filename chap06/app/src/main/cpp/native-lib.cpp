@@ -2,6 +2,7 @@
 #include "include/GLIncludes.h"
 #include "include/AssetManagerHandler.h"
 #include "include/Matrix.h"
+#include "include/Shader.h"
 
 #include <android/log.h>
 
